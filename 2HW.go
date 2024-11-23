@@ -2,11 +2,13 @@ package main
 
 import (
   "fmt"
-  "flag" // для флага --flag
+  "flag" // для флага --file
   "os"
   "io"
+  "encoding/json"
 )
 
+// ищем путь к файлу по приоритету
 func getFilePathSource(flag_path string) string {
     if flag_path != "" {
         return flag_path
@@ -68,6 +70,29 @@ func main() {
         return
     }
     
-    fmt.Println("File name: ", file_path)
-    fmt.Println(string(file_data))
+    var input_data []InputData
+    if err := json.Unmarshal(file_data, &input_data); err != nil {
+        fmt.Printf("Ошибка при парсинге JSON: %v\n", err)
+        return
+    }
+    
+    fmt.Println("Имя файла: ", file_path)
+    
+    results := handlerDataFunc(input_data)
+
+    output_file, err := os.Create("out.json")
+    if err != nil {
+        fmt.Println("Не удалось создать выходной файл:", err)
+        return
+    }
+    defer output_file.Close()
+
+    encoder := json.NewEncoder(output_file)
+    encoder.SetIndent("", "\t")
+    if err := encoder.Encode(results); err != nil {
+        fmt.Println(err)
+        return
+    }
+    fmt.Println("Обработка успешно завершена!")
+    //fmt.Println(string(file_data))
 }
