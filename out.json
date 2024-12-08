@@ -1,0 +1,17 @@
+[
+	{
+		"company": "hoofs",
+		"valid_operations_count": 2,
+		"balance": 77
+	},
+	{
+		"company": "horns",
+		"valid_operations_count": 1,
+		"balance": 123,
+		"invalid_operations": [
+			2,
+			3,
+			4
+		]
+	}
+]
